@@ -1,0 +1,7 @@
+image_topic: "image_data"
+img_cv_type: 16
+pool_size: 256
+img_url: "tcp://localhost:10001"
+container_admin_name: "DISP1"
+server_admin_port: 9090
+server_system_port: 9191

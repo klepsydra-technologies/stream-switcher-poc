@@ -1,0 +1,13 @@
+
+image_topic: "image_data"
+img_cv_type: 16
+pool_size: 256
+recv_img_url: "tcp://localhost:9001"
+#img_url_2: "tcp://localhost:9011"
+#img_url_3: "tcp://localhost:9021"
+#img_url_4: "tcp://localhost:9031"
+pub_img_url: "tcp://*:10001"
+container_admin_name: "SSW1"
+server_admin_port: 9090
+server_system_port: 9191
+num_subscribers: 4
