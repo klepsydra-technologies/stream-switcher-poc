@@ -13,6 +13,8 @@
 
 #include "file_utils.h"
 
+namespace ssw
+{
 class SimpleWriteService : public kpsr::Service
 {
 public:
@@ -93,6 +95,6 @@ private:
     unsigned index;
     std::vector<int>::size_type sz;
 };
-
+}
 
 #endif // SIMPLE_WRITE_SERVICE_H

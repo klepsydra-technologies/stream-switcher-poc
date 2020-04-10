@@ -26,66 +26,61 @@ int main(int argc, char **argv)
 
   int imgWidth = 320;
   int imgHeight = 240;
-  std::string recvImgUrl;
   std::string imgTopic;
-  yamlEnv.getPropertyString("recv_img_url", recvImgUrl);
+  std::string imgUrlRoot;
+  std::vector<std::string> recvImgUrls;
+  int numSubscribers;
+  int loopPeriod;
+
+  yamlEnv.getPropertyString("recv_img_url_root", imgUrlRoot);
   yamlEnv.getPropertyString("image_topic", imgTopic);
+  yamlEnv.getPropertyInt("num_subscribers", numSubscribers);
+  yamlEnv.getPropertyInt("loop_period", loopPeriod);
 
-  kpsr::Subscriber<kpsr::vision_ocv::ImageData> *imageSubscriber;
-  kpsr::Publisher<kpsr::vision_ocv::ImageData> *imagePublisher;
-
-  zmq::context_t context(1);
-  zmq::socket_t subscriber(context, ZMQ_SUB);
-  kpsr::zmq_mdlw::FromZmqChannel<Base> *binaryFromZMQProvider;
-  kpsr::zmq_mdlw::FromZmqMiddlewareProvider fromZmqMiddlewareProvider;
-  kpsr::high_performance::EventLoopMiddlewareProvider<128> eventLoop(nullptr);
+  std::vector<kpsr::Subscriber<kpsr::vision_ocv::ImageData>*> imageSubscribers;
+  std::vector<kpsr::Publisher<kpsr::vision_ocv::ImageData>*> imagePublishers;
   kpsr::vision_ocv::ImageDataFactory factory(imgWidth, imgHeight, 0, "frame");
 
-  eventLoop.start();
-  subscriber.connect(recvImgUrl);
-  subscriber.setsockopt(ZMQ_SUBSCRIBE, imgTopic.c_str(), imgTopic.size());
-  binaryFromZMQProvider =
-      fromZmqMiddlewareProvider
-          .getBinaryFromMiddlewareChannel<kpsr::vision_ocv::ImageData>(
-              subscriber, 128);
+  zmq::context_t context(1);
+  std::vector<zmq::socket_t> subscribers(numSubscribers);
+  std::vector<kpsr::zmq_mdlw::FromZmqChannel<Base>> binaryFromZMQProviders(numSubscribers);
+  std::vector<kpsr::zmq_mdlw::FromZmqMiddlewareProvider> fromZmqMiddlewareProviders(numSubscribers);
+  std::vector<ssw::SimpleReadService> simpleReadServices(numSubscribers);
+  kpsr::high_performance::EventLoopMiddlewareProvider<EVENT_LOOP_SIZE> eventloop(nullptr);
 
-  binaryFromZMQProvider->start();
-  imageSubscriber =
-      eventLoop.getSubscriber<kpsr::vision_ocv::ImageData>(imgTopic);
-  imagePublisher =
-      eventLoop.getPublisher<kpsr::vision_ocv::ImageData>(imgTopic, EVENT_LOOP_SIZE, factory.initializerFunction, factory.eventClonerFunction);
+  eventloop.start();
 
-  binaryFromZMQProvider->registerToTopic(imgTopic, imagePublisher);
- 
-  SimpleReadService imgSubscriber(nullptr, imageSubscriber);
+  for(int i=0;i<numSubscribers; i++){
+    recvImgUrls[i] = imgUrlRoot + std::to_string(i);
+    subscribers[i] = zmq::socket_t(context, ZMQ_SUB);
+    subscribers[i].connect(recvImgUrls[i]);
+    subscribers[i].setsockopt(ZMQ_SUBSCRIBE, imgTopic.c_str(), imgTopic.size());
 
-  imgSubscriber.startup();
+    binaryFromZMQProviders[i] = fromZmqMiddlewareProviders[i].getBinaryFromMiddlewareChannel<kpsr::vision_ocv::ImageData>(subscribers[i], 128);
+    binaryFromZMQProviders[i].start();
+    imageSubscribers[i] = eventloop.getSubscriber<kpsr::vision_ocv::ImageData>(imgTopic);
+    imagePublishers[i] = eventloop.getPublisher<kpsr::vision_ocv::ImageData>(imgTopic, EVENT_LOOP_SIZE, factory.initializerFunction, factory.eventClonerFunction);
+    binaryFromZMQProviders[i].registerToTopic(imgTopic, imagePublishers[i]);
 
-  ssw::StreamSwitcherSvc streamSwitcherSvc(&yamlEnv);
-  streamSwitcherSvc.startup();
-
-  ssw::DisplaySvc displaySvc(&yamlEnv);
-  displaySvc.startup();
-
-  while (true)
-  {
-    imgSubscriber.runOnce();
-    //streamSwitcherSvc.runOnce();
-    //displaySvc.runOnce();
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    simpleReadServices[i](nullptr, *imageSubscribers[i]);
+    simpleReadServices[i].startup();
   }
 
-  displaySvc.shutdown();
-  streamSwitcherSvc.shutdown();
-  imgSubscriber.shutdown();
+  ssw::StreamSwitcherSvc streamSwitcherSvc(&yamlEnv);
+  ssw::DisplaySvc displaySvc(&yamlEnv, imageSubscribers[0]);
+
+  while (true)
+  {     //  --> use eventLoop scheduler  (event_loop_middleware_provider.h)
+
+    for(int i=0;i<numSubscribers; i++){
+      simpleReadServices[i].runOnce();
+    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(loopPeriod));
+  }
+
+  for(int i=0;i<numSubscribers; i++){
+      simpleReadServices[i].shutdown();
+  }
 
   return 0;
-} // end main()
-
-
-
-
-
-
-
- 
+}

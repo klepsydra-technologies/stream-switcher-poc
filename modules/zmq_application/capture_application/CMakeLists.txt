@@ -10,6 +10,7 @@ find_package(cppzmq REQUIRED)
 
 set(MAIN_INSTALL_PREFIX $ENV{HOME}/install)
 set(THIRDPARTIES_PATH $ENV{HOME}/thirdparties)
+
 set(CPT_LIBRARY capture_svc)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)

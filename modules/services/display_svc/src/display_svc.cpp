@@ -1,13 +1,11 @@
-
-
 #include <iostream>
-
 #include "display_svc.h"
 
 namespace ssw
 {
-DisplaySvc::DisplaySvc(kpsr::Environment *environment)
-    : Service(environment, "stream_switcher_service") {}
+DisplaySvc::DisplaySvc(kpsr::Environment *environment, kpsr::Subscriber<kpsr::vision_ocv::ImageData> *imgsubscriber)
+    : Service(environment, "stream_switcher_service")
+    , _activeCamera(environment, imgsubscriber) {}
 
 void DisplaySvc::start()
 {
@@ -20,11 +18,7 @@ void DisplaySvc::stop()
 }
 
 void DisplaySvc::execute()
-{
-  //spdlog::info("Execute");
-   //read img to _currentImage
-  //showImage(_currentImage);
-  
+{ 
 }
 
 void DisplaySvc::showImage(kpsr::vision_ocv::ImageData &image)

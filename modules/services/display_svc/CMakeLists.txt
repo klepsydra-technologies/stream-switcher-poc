@@ -6,7 +6,7 @@ set( ${PROJ_MAIN_NAME}_PATH_INSTALL )
 # Include directories with headers
 # ---------------------------------------------------#
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-include_directories(${${PROJ_MAIN_NAME}_PATH_MAIN}/modules/include)
+include_directories(${${PROJ_MAIN_NAME}_PATH_MAIN}/modules/services/capture_svc/include)
 include_directories(${KLEPSYDRA_INCLUDE_DIRS})
 
 # Source
