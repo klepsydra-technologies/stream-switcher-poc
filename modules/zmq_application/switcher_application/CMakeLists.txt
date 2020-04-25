@@ -13,10 +13,12 @@ set(THIRDPARTIES_PATH $ENV{HOME}/thirdparties)
 
 set(SSW_LIBRARY stream_switcher_svc)
 set(CPT_LIBRARY capture_svc)
+set(DISP_LIBRARY display_svc)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${${PROJ_MAIN_NAME}_PATH_MAIN}/modules/services/stream_switcher_svc/include)
 include_directories(${${PROJ_MAIN_NAME}_PATH_MAIN}/modules/services/capture_svc/include)
+include_directories(${${PROJ_MAIN_NAME}_PATH_MAIN}/modules/services/display_svc/include)
 include_directories(${${PROJ_MAIN_NAME}_PATH_MAIN}/modules/zmq_application/common)
 include_directories(${KLEPSYDRA_INCLUDE_DIRS})
 
@@ -42,6 +44,7 @@ target_link_libraries(
     libzmq
     ${SSW_LIBRARY}
     ${CPT_LIBRARY}
+    ${DISP_LIBRARY}
     ${OpenCV_LIBS}
     )
 

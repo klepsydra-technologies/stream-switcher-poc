@@ -1,5 +1,7 @@
-#ifndef STREAMSWITCHERSVC_H
-#define STREAMSWITCHERSVC_H
+
+
+#ifndef CAPTURE_SVC_H
+#define CAPTURE_SVC_H
 
 #include <iostream>
 #include <stdio.h>
@@ -19,7 +21,7 @@
 
 namespace ssw
 {
-class StreamSwitcherSvc : public kpsr::Service
+class CaptureSvc : public kpsr::Service
 {
 public:
   StreamSwitcherSvc(kpsr::Environment *environment);
@@ -31,7 +33,6 @@ protected:
   void stop() override;
   void execute() override;
 /*
-  vec<Subscriber<NCams>>
   Publisher<cam>
   subscriber<idCam>
   vector<imgdata>
@@ -40,9 +41,10 @@ protected:
 private:
   void onImgReceived(const kpsr::vision_ocv::ImageData &img);
 
-  std::vector<kpsr::Subscriber<kpsr::vision_ocv::ImageData>> *_imageDataSubscribers;
+  std::vector<kpsr::Publisher<kpsr::vision_ocv::ImageData>> *_imageDataPublishers;
   kpsr::vision_ocv::ImageData _image;
   int _activeCamera;
+  int numCameras;
 };
 } // namespace ssw
-#endif // STREAMSWITCHERSVC_H
+#endif // CAPTURE_SVC_H

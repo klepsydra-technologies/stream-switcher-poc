@@ -17,6 +17,7 @@
 #include "config.h"
 #include "simple_read_service.h"
 #include "stream_switcher_svc.h"
+#include "display_svc.h"
 
 int main(int argc, char **argv)
 {
@@ -26,10 +27,8 @@ int main(int argc, char **argv)
   int imgWidth = 320;
   int imgHeight = 240;
   std::string recvImgUrl;
-  std::string pubImgUrl;
   std::string imgTopic;
   yamlEnv.getPropertyString("recv_img_url", recvImgUrl);
-  yamlEnv.getPropertyString("pub_img_url", pubImgUrl);
   yamlEnv.getPropertyString("image_topic", imgTopic);
 
   kpsr::Subscriber<kpsr::vision_ocv::ImageData> *imageSubscriber;
@@ -65,13 +64,18 @@ int main(int argc, char **argv)
   ssw::StreamSwitcherSvc streamSwitcherSvc(&yamlEnv);
   streamSwitcherSvc.startup();
 
+  ssw::DisplaySvc displaySvc(&yamlEnv);
+  displaySvc.startup();
+
   while (true)
   {
-    spdlog::info("runOnce();");
     imgSubscriber.runOnce();
+    //streamSwitcherSvc.runOnce();
+    //displaySvc.runOnce();
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
   }
 
+  displaySvc.shutdown();
   streamSwitcherSvc.shutdown();
   imgSubscriber.shutdown();
 

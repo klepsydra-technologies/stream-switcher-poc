@@ -7,12 +7,12 @@ StreamSwitcherSvc::StreamSwitcherSvc(kpsr::Environment *environment)
 
 void StreamSwitcherSvc::start()
 {
-  spdlog::info("Start");
+  spdlog::info("Start stream switcher service");
 }
 
 void StreamSwitcherSvc::stop()
 {
-  spdlog::info("Stop");
+  spdlog::info("Stop stream switcher service");
 }
 
 void StreamSwitcherSvc::execute()
