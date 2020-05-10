@@ -1,0 +1,13 @@
+file_images_path: "/home/javi/projects/stream-switcher-poc/tests/data_1/"
+image_topic: "image_data"
+restart_if_no_more_images: true
+img_cv_type: 16
+pool_size: 256
+img_url: "tcp://*:9001"
+#img_url_2: "tcp://*:9011"
+#img_url_3: "tcp://*:9021"
+#img_url_4: "tcp://*:9031"
+container_admin_name: "CAPT1"
+server_admin_port: 9090
+server_system_port: 9191
+num_subscribers: 4
