@@ -30,13 +30,6 @@ protected:
   void start() override;
   void stop() override;
   void execute() override;
-/*
-  vec<Subscriber<NCams>>
-  Publisher<cam>
-  subscriber<idCam>
-  vector<imgdata>
-  [_index, , i, _publisher](const kpsr::ImgData & image) {
-*/
 private:
   void onImgReceived(const kpsr::vision_ocv::ImageData &img);
 

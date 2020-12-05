@@ -14,6 +14,8 @@
 
 #include <klepsydra/vision_ocv/image_event_data.h>
 
+namespace ssw
+{
 class SimpleReadService : public kpsr::Service
 {
 public:
@@ -50,7 +52,7 @@ public:
         if(!_lastReadImg.img.data) {
             spdlog::warn("no image data");
         }
-        cv::imshow("Display window", _lastReadImg.img);
+        cv::imshow("Display window", _lastReadImg.img); // CONFIGURABLE WINDOWS_NAME
         spdlog::info("displaying..."); //OpenCV compiled with GTK_ON, but window is not displayed in Ubuntu18.04 (test OCV4)
     }
 
@@ -61,5 +63,5 @@ private:
     kpsr::Subscriber<kpsr::vision_ocv::ImageData> * _subscriber;
     long _startTimestamp;
 };
-
+}
 #endif // SIMPLE_READ_SERVICE_H

@@ -14,12 +14,14 @@
 
 #include <klepsydra/vision_ocv/image_event_data.h>
 
+#include "simple_read_service.h"
+
 namespace ssw
 {
 class DisplaySvc : public kpsr::Service
 {
 public:
-  DisplaySvc(kpsr::Environment *environment);
+  DisplaySvc(kpsr::Environment *environment, kpsr::Subscriber<kpsr::vision_ocv::ImageData> *imgsubscriber);
 
   ~DisplaySvc(){};
 
@@ -31,6 +33,7 @@ protected:
   void showImage(kpsr::vision_ocv::ImageData &image);
 
 private:
+  SimpleReadService _activeCamera;
   kpsr::vision_ocv::ImageData _currentImage;
 
 };
