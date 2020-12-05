@@ -1,0 +1,11 @@
+file_images_path_root: "tests/data_"
+image_topic: "image_data"
+restart_if_no_more_images: true
+img_cv_type: 16
+pool_size: 256
+img_url_root: "tcp://*:900"
+container_admin_name: "CAPT1"
+#server_admin_port: 9090
+#server_system_port: 9191
+num_publishers: 4
+loop_period: 1000

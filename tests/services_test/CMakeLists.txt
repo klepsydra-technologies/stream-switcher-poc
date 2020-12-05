@@ -1,0 +1,2 @@
+
+add_subdirectory(stream_switcher_svc_test)
